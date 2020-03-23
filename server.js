@@ -66,10 +66,10 @@ io.on('connection', function(socket){
 
 });
 
-// http.listen(80, function(){
-//   console.log('listening on *:80');
-// });
+http.listen(8080, function(){
+  console.log('listening on *:8080');
+});
 
-httpsx.listen(8443, function(){
+https.listen(8443, function(){
   console.log('https listening on *:8443');
 });
