@@ -70,6 +70,6 @@ http.listen(80, function(){
   console.log('listening on *:80');
 });
 
-httpsServer.listen(8443, function(){
+https.listen(8443, function(){
   console.log('https listening on *:8443');
 });
