@@ -4,7 +4,17 @@ socket.emit('player_join','player ' +' join');
 var speed = 0;
 var rotation = 0;
 
+
+if(window.DeviceOrientationEvent) {
+  
 window.addEventListener("deviceorientation", handleOrientation, true);
+
+}else{
+    document.querySelector('body').innerHTML = '你的瀏覽器不支援喔';
+}
+
+
+
 
 
 function handleOrientation(event) {
