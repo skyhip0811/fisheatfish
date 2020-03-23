@@ -2,7 +2,7 @@ var express = require('express');
 var app = express();
 var fs = require('fs');
 var http = require('http').Server(app);
-var io = require('socket.io')(http, {'pingInterval': 2000, 'pingTimeout': 5000});
+var io = require('socket.io')(https, {'pingInterval': 2000, 'pingTimeout': 5000});
 
 var privateKey  = fs.readFileSync('sslcert/server.key', 'utf8');
 var certificate = fs.readFileSync('sslcert/server.crt', 'utf8');
@@ -66,10 +66,10 @@ io.on('connection', function(socket){
 
 });
 
-http.listen(80, function(){
-  console.log('listening on *:80');
-});
+// http.listen(80, function(){
+//   console.log('listening on *:80');
+// });
 
-https.listen(8443, function(){
+httpsx.listen(8443, function(){
   console.log('https listening on *:8443');
 });
