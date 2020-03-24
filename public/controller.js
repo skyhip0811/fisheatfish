@@ -6,8 +6,16 @@ var rotation = 0;
 
 
 if(window.DeviceOrientationEvent) {
+
+  DeviceOrientationEvent.requestPermission()
+.then(response => {
+  if (response == 'granted') {
+    window.addEventListener("deviceorientation", handleOrientation, true);
+  }
+})
+.catch(console.error)
   
-window.addEventListener("deviceorientation", handleOrientation, true);
+
 
 }else{
     document.querySelector('body').innerHTML = '你的瀏覽器不支援喔';
