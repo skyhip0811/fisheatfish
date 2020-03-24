@@ -11,9 +11,25 @@
     </style>
 </head>
 <body>
+
 <div id='test'>test</div>
+<div id="joystick" style = "width:100vw;height:90vh;"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/nipplejs/0.7.3/nipplejs.min.js"></script>
+
+<script>
+    var dynamic = nipplejs.create({
+        zone: document.getElementById('joystick'),
+        color: 'blue'
+    });
+
+    dynamic.on('move', function (evt, data) {
+        // DO EVERYTHING
+        handleJoystick(data);
+    });
+</script>
 <script src ="controller.js">
+
 
 
 </script>

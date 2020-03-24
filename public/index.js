@@ -39,8 +39,10 @@ socket.on('player_update_position', (obj) => {
     if(element.id == obj.id) {
         console.log('speed update')
             game.global.players[index].speed = obj.speed;
-            game.global.players[index].rotation = obj.rotation;
-            game.global.players[index].sprite.rotation = obj.rotation;
+            // game.global.players[index].rotation = obj.rotation;
+            // game.global.players[index].sprite.rotation = obj.rotation;
+            game.global.players[index].sprite.rotation =  obj.rotation;
+            game.global.players[index].rotation =  obj.rotation;
 
         }
     });

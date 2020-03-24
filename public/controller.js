@@ -32,16 +32,23 @@ function onClick() {
 onClick();
 
 function handleOrientation(event) {
-  var absolute = event.absolute;
-  var alpha    = event.alpha;
-  var beta     = event.beta;
-  var gamma    = event.gamma;
-  speed = Math.cos(degrees_to_radians(beta))*30;
-  rotation = gamma;
+  // var absolute = event.absolute;
+  // var alpha    = event.alpha;
+  // var beta     = event.beta;
+  // var gamma    = event.gamma;
+  // speed = Math.cos(degrees_to_radians(beta))*30;
+  // rotation = gamma;
 
-  // Do stuff with the new orientation data
-document.getElementById('test').innerHTML  = [absolute,alpha,speed,gamma];
+  // // Do stuff with the new orientation data
+// document.getElementById('test').innerHTML  = [absolute,alpha,speed,gamma];
 
+}
+
+function handleJoystick(data){
+  console.log(data);
+  speed = data.force?data.force*10:0+10;
+  rotation = -data.angle.radian;
+  document.getElementById('test').innerHTML  = [JSON.stringify(data)];
 }
 
 setInterval(()=>{

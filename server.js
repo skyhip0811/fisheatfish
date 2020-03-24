@@ -56,7 +56,7 @@ io.on('connection', function(socket){
 	    		if(msg.speed > 30){msg.speed = 30};
 	    		if(msg.speed < 0){msg.speed = 1};
 	            players[index].speed = msg.speed/5;
-	            players[index].rotation += msg.rotation/100;
+	            players[index].rotation = msg.rotation;
 	            socket.to(game.id).emit('player_update_position',players[index]);
 	        }
 	    });
