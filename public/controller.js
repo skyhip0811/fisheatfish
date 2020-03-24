@@ -11,10 +11,10 @@ function onClick() {
   // feature detect
   if (typeof DeviceOrientationEvent.requestPermission === 'function') {
     DeviceOrientationEvent.requestPermission()
-      .then(permissionState => {
-        if (permissionState === 'granted') {
+      .then(function(){
+        
           window.addEventListener("deviceorientation", handleOrientation, true);
-        }
+        
       })
       .catch(console.error);
   } else {
@@ -29,7 +29,7 @@ function onClick() {
 }
 
 
-
+onClick();
 
 function handleOrientation(event) {
   var absolute = event.absolute;
