@@ -6,6 +6,7 @@ var rotation = 0;
 
 
 
+
 function onClick() {
   // feature detect
   if (typeof DeviceOrientationEvent.requestPermission === 'function') {
@@ -18,10 +19,14 @@ function onClick() {
       .catch(console.error);
   } else {
     // handle regular non iOS 13+ devices
+   if(window.DeviceOrientationEvent) {
+      window.addEventListener("deviceorientation", handleOrientation, true);
+
+    }else{
+        document.querySelector('body').innerHTML = '你的瀏覽器不支援喔';
+    }
   }
 }
-
-onClick();
 
 
 
