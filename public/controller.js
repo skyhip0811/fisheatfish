@@ -5,22 +5,23 @@ var speed = 0;
 var rotation = 0;
 
 
-if(window.DeviceOrientationEvent) {
 
-  DeviceOrientationEvent.requestPermission()
-.then(response => {
-  if (response == 'granted') {
-    window.addEventListener("deviceorientation", handleOrientation, true);
+function onClick() {
+  // feature detect
+  if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+    DeviceOrientationEvent.requestPermission()
+      .then(permissionState => {
+        if (permissionState === 'granted') {
+          window.addEventListener("deviceorientation", handleOrientation, true);
+        }
+      })
+      .catch(console.error);
+  } else {
+    // handle regular non iOS 13+ devices
   }
-})
-.catch(console.error)
-  
-
-
-}else{
-    document.querySelector('body').innerHTML = '你的瀏覽器不支援喔';
 }
 
+onClick();
 
 
 
