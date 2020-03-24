@@ -30,9 +30,9 @@ socket.on('player_disconnect', (msg) => {
 
     });
 
-socket.on('playes_list', (obj) => {
-     game.global.players = obj;
-});
+// socket.on('playes_list', (obj) => {
+//      game.global.players = obj;
+// });
 
 socket.on('player_update_position', (obj) => {
     game.global.players.forEach((element, index) => {
@@ -102,6 +102,10 @@ function update() {
         obj.sprite.y  = obj.sprite.y < 0 ? 1008 :obj.sprite.y
     });
     
+
+    if(Math.random()>0.5){
+        
+    }
 
 }
 
