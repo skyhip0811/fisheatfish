@@ -25,6 +25,7 @@ game.global = {
  playersgroup: null,
  starsgroup:null,
  tailgroup:null,
+ sharkgroup:null,
 
 }
 
@@ -74,6 +75,7 @@ function preload() {
     this.load.image('grass1', 'PNG/Default size/fishTile_053.png');
     this.load.image('fish', 'PNG/Default size/fishTile_100.png');
     this.load.image('star', 'PNG/star.png');
+    this.load.image('shark', 'PNG/shark.png');
     this.load.tilemapCSV('map', 'csv/map.csv');
     this.load.image('tiles', 'Tilesheet/fishtilesheet.png');
 
@@ -100,6 +102,10 @@ function create() {
     game.global.tailgroup = this.physics.add.group();
     game.global.tailgroup .enableBody = true;
     game.global.tailgroup.physicsBodyType = Phaser.Physics.ARCADE;
+
+    game.global.sharkgroup = this.physics.add.group();
+    game.global.sharkgroup .enableBody = true;
+    game.global.sharkgroup.physicsBodyType = Phaser.Physics.ARCADE;
 
 
     
@@ -128,6 +134,10 @@ function create() {
     setInterval(()=>{
     generate_star()
     }, 1000);
+
+    setInterval(()=>{
+    generate_shark()
+    }, 5000);
 
     socket.on('player_join', (obj) => {
 
@@ -170,6 +180,18 @@ function create() {
         
         
 
+    })
+
+    this.physics.add.collider(obj.sprite,game.global.sharkgroup,function(_player,_shark){
+
+                destroy_player(_player);
+
+
+    })
+
+    this.physics.add.collider(game.global.sharkgroup ,game.global.tailgroup,function(_shark,_tail){
+
+        _tail.destroy();
     })
 
   
@@ -226,18 +248,25 @@ function update() {
         // obj.sprite.y  = obj.sprite.y > 1008 ? 0 :obj.sprite.y
         // obj.sprite.y  = obj.sprite.y < 0 ? 1008 :obj.sprite.y
         _rotation = obj._rotation;
+        var j = 0;
         obj.sprite.tails.forEach(function(tail){
+
             old_rotaion = tail.rotation;
             _vx = obj.speed*20 * Math.cos(_rotation) *2;
             _vy = obj.speed*20 * Math.sin(_rotation) *2;
             tail.rotation = _rotation;
             _rotation = old_rotaion;
-
-
-            tail.setVelocityX(_vx);
-            tail.setVelocityY(_vy);
-            if(_vx < 0) tail.setFlip(false,true);
-            if(_vx > 0) tail.setFlip(false,false);
+            console.log(tail);
+            if(tail.active == true){
+                tail.setVelocityX(_vx);
+                tail.setVelocityY(_vy);
+                if(_vx < 0) tail.setFlip(false,true);
+                if(_vx > 0) tail.setFlip(false,false);
+            }else{
+                 obj.sprite.tails.splice(j,1);
+            }
+            j+=1;
+            
         });
     });
 
@@ -265,13 +294,46 @@ function generate_star(){
         new_star.setScale(.2,.2);
         // new_star.body.immovable = true;
         // new_star.scale.setTo(.2,.2);
-        new_star.setCollideWorldBounds(true);
+        // new_star.setCollideWorldBounds(true);
         // game.physics.enable(new_star, Phaser.Physics.ARCADE);
         // game.global.starsgroup.add(new_star);
         game.global.stars.push(new_star);
 
+
     }
 }
+
+function generate_shark(){
+    if(Math.random()>0.7){
+        if(Math.random() > 0.5){
+            let new_shark = game.global.sharkgroup.create(2000, Math.random()*1000, 'shark');
+                new_shark.setVelocityX(-400);
+                new_shark.setScale(.7,.7);
+                new_shark.body.immovable = true;
+                console.log(new_shark);
+                setTimeout(function(){
+                    new_shark.destroy()
+                },15000);
+
+        }else{
+
+            let new_shark = game.global.sharkgroup.create(-500, Math.random()*1000, 'shark');
+                new_shark.setVelocityX(400);
+                new_shark.setScale(.7,.7);
+                new_shark.body.immovable = true;
+                new_shark.setFlip(true,false);
+                console.log(new_shark);
+                setTimeout(function(){
+                    new_shark.destroy()
+                },15000);
+
+        }
+                
+
+    }
+}
+
+
 
 function render() {
 
