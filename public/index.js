@@ -7,7 +7,7 @@ var config = {
     physics: {
         default: 'arcade',
         arcade: {
-             debug: false,
+             debug: true,
             gravity: { y: 0 }
         }
     },
@@ -304,7 +304,7 @@ function generate_star(){
 }
 
 function generate_shark(){
-    if(Math.random()>0.7){
+    if(Math.random()>0.5){
         if(Math.random() > 0.5){
             let new_shark = game.global.sharkgroup.create(2000, Math.random()*1000, 'shark');
                 new_shark.setVelocityX(-400);
