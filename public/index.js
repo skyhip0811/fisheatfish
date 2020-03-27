@@ -306,7 +306,7 @@ function generate_star(){
 function generate_shark(){
     if(Math.random()>0.5){
         if(Math.random() > 0.5){
-            let new_shark = game.global.sharkgroup.create(2000, Math.random()*1000, 'shark');
+            let new_shark = game.global.sharkgroup.create(2500, Math.random()*1000, 'shark');
                 new_shark.setVelocityX(-400);
                 new_shark.setScale(.7,.7);
                 new_shark.body.immovable = true;
