@@ -4,7 +4,7 @@ var config = {
     height: 1024,
     backgroundColor: '#a1d6e6',
     parent: 'phaser-example',
-     physics: {
+    physics: {
         default: 'arcade',
         arcade: {
              debug: false,
@@ -23,40 +23,20 @@ game.global = {
  sound : false,
  stars : [],
  playersgroup: null,
- starsgroup:null
+ starsgroup:null,
+ tailgroup:null,
+
 }
 
 var socket = io();
 socket.emit('game_server_is_ready','Game is ready message');
-socket.on('player_join', (obj) => {
 
-    // obj.sprite = game.add.sprite(obj.x, obj.y, 'fish');
-    obj.sprite = game.global.playersgroup.create(obj.x, obj.y, 'fish').setVelocity(300,0);
-    obj.sprite.setCollideWorldBounds(true);
-    obj.sprite.setBounceX(1);
-    obj.sprite.setBounceY(1);
-    // obj.sprite.setVelocityX( obj.speed*20 * Math.cos(obj.rotation) *2);
-    // obj.sprite.setVelocity(300,0)
-    // game.global.playersgroup.add(obj.sprite);
-    // obj.sprite.anchor.setTo(0.5, 0.5);
-    // obj.sprite.setScale(1);
-    // obj.sprite.rotation = obj.rotation;
-    // game.physics.enable(obj.sprite, Phaser.Physics.ARCADE);
-    // obj.sprite.body.collideWorldBounds = true;
-    // obj.sprite.body.bounce.x = 1;
-    // obj.sprite.body.bounce.y = 1;
-    // obj.sprite.body.immovable = false;
-    // obj.sprite.body.collideWorldBounds = true;
-    game.global.players.push(obj);
-    
-    
-});
 
 socket.on('player_disconnect', (msg) => {
 
         game.global.players = game.global.players.filter(function( obj ) {
             if(obj.id == msg.id){
-                obj.sprite.destroy();
+                destroy_player(obj.sprite);
             }
             return obj.id !== msg.id;
         });
@@ -75,6 +55,7 @@ socket.on('player_update_position', (obj) => {
             // game.global.players[index].rotation = obj.rotation;
             // game.global.players[index].sprite.rotation = obj.rotation;
             game.global.players[index].sprite.rotation =  obj.rotation;
+            game.global.players[index]._rotation = game.global.players[index].rotation;
             game.global.players[index].rotation =  obj.rotation;
 
 
@@ -115,6 +96,12 @@ function create() {
     game.global.starsgroup = this.physics.add.group();
     game.global.starsgroup .enableBody = true;
     game.global.starsgroup.physicsBodyType = Phaser.Physics.ARCADE;
+
+    game.global.tailgroup = this.physics.add.group();
+    game.global.tailgroup .enableBody = true;
+    game.global.tailgroup.physicsBodyType = Phaser.Physics.ARCADE;
+
+
     
     //  Because we're loading CSV map data we have to specify the tile size here or we can't render it
     // map = game.add.tilemap('map', 64, 64);
@@ -122,10 +109,7 @@ function create() {
     var tileset = map.addTilesetImage('tiles');
      var layer = map.createStaticLayer(0, tileset, 0, 0); // layer index, tileset, x, y
      this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
-     this.physics.add.collider(game.global.playersgroup, game.global.starsgroup, function(_player,_star){
-        _star.destroy();
 
-     });
 
     //  Now add in the tileset
     // map.addTilesetImage('tiles');
@@ -145,7 +129,84 @@ function create() {
     generate_star()
     }, 1000);
 
+    socket.on('player_join', (obj) => {
+
+    obj.sprite = this.physics.add.sprite(obj.x, obj.y, 'fish');
+    obj.sprite.objid = obj.id;
+    obj.sprite.tails = [];
+    game.global.players.push(obj);
+    obj.sprite.score = 0;
+    obj._rotation = 0;
+
+    
+    // obj.sprite = game.global.playersgroup.create(obj.x, obj.y, 'fish').setVelocity(300,0);
+
+    //Eat star
+    this.physics.add.collider(obj.sprite , game.global.starsgroup, function(_player,_star){
+        
+        _player.score+=1;
+        console.log(_player.score);
+        _star.destroy();
+
+        tail = game.global.tailgroup.create(_player.x - 100*Math.cos(obj.rotation),_player.y - 100* Math.sin(obj.rotation),'fish');
+        _player.tails.push(tail);
+        tail._parent = _player;
+        tail.rotation = _player.rotation;
+        tail.setScale(.5,.5);
+
+
+
+     });
+
+    this.physics.add.collider(obj.sprite,game.global.tailgroup,function(_player,_tail){
+
+        
+            if(_tail._parent.objid !=  _player.objid){
+                
+                destroy_player(_player);
+
+            }
+            
+        
+        
+
+    })
+
+  
+
+
+    // for (var i = 0, len = game.global.players.length; i < len; i++) {
+    //     this.physics.add.collider(game.global.players[i].sprite.tailgroup,obj.sprite),function(_tail,new_player){
+    //          for (var i =  0; i < game.global.players.length; i++) {
+    //              if(game.global.players[i].id == new_player.objid) game.global.players.splice(i,1);
+    //          };
+    //          new_player.destroy();
+
+    //     }
+    // }
+
+    obj.sprite.setCollideWorldBounds(true);
+    // obj.sprite.setBounceX(1);
+    // obj.sprite.setBounceY(1);
+    // obj.sprite.setVelocityX( obj.speed*20 * Math.cos(obj.rotation) *2);
+    // obj.sprite.setVelocity(300,0)
+    // game.global.playersgroup.add(obj.sprite);
+    // obj.sprite.anchor.setTo(0.5, 0.5);
+    // obj.sprite.setScale(1);
+    // obj.sprite.rotation = obj.rotation;
+    // game.physics.enable(obj.sprite, Phaser.Physics.ARCADE);
+    // obj.sprite.body.collideWorldBounds = true;
+    // obj.sprite.body.bounce.x = 1;
+    // obj.sprite.body.bounce.y = 1;
+    // obj.sprite.body.immovable = false;
+    // obj.sprite.body.collideWorldBounds = true;
+    
+    
+    
+});
+
 }
+
 
 function update() {
     game.global.players.forEach((obj)=>{
@@ -154,15 +215,46 @@ function update() {
         
         // obj.sprite.velocity.x = obj.speed*20 * Math.cos(obj.rotation) *2;
         vx = obj.speed*20 * Math.cos(obj.rotation) *2;
+
+        vy = obj.speed*20 * Math.sin(obj.rotation) *2;
         obj.sprite.setVelocityX(vx);
         if(vx < 0) obj.sprite.setFlip(false,true);
         if(vx > 0) obj.sprite.setFlip(false,false);
-        obj.sprite.setVelocityY( obj.speed*20 * Math.sin(obj.rotation) *2);
+        obj.sprite.setVelocityY(vy );
         // obj.sprite.x  = obj.sprite.x > 1760 ? 0 :obj.sprite.x
         // obj.sprite.x  = obj.sprite.x < 0 ? 1760 :obj.sprite.x
         // obj.sprite.y  = obj.sprite.y > 1008 ? 0 :obj.sprite.y
         // obj.sprite.y  = obj.sprite.y < 0 ? 1008 :obj.sprite.y
+        _rotation = obj._rotation;
+        obj.sprite.tails.forEach(function(tail){
+            old_rotaion = tail.rotation;
+            _vx = obj.speed*20 * Math.cos(_rotation) *2;
+            _vy = obj.speed*20 * Math.sin(_rotation) *2;
+            tail.rotation = _rotation;
+            _rotation = old_rotaion;
+
+
+            tail.setVelocityX(_vx);
+            tail.setVelocityY(_vy);
+            if(_vx < 0) tail.setFlip(false,true);
+            if(_vx > 0) tail.setFlip(false,false);
+        });
     });
+
+}
+
+function destroy_player(_player){
+    for (var i =  0; i < game.global.players.length; i++) {
+    if(game.global.players[i].id == _player.objid ) {
+        game.global.players.splice(i,1);
+        _player.tails.forEach(function(__tail){
+                        __tail.destroy();
+                    })
+                    _player.destroy();
+                    
+    }
+    };
+                    
 
 }
 
